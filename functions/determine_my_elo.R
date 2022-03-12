@@ -7,6 +7,3 @@ determine_my_elo <- function(df,user){
   df$opp_elo[df$Black == user] <- df$WhiteElo[df$Black == user]
   return(df)
 }
-
-
-

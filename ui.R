@@ -23,16 +23,21 @@ shinyUI(fluidPage(
     tags$head(tags$style('body {color:#C0BFBF;}')),
     
     # Application title
-    titlePanel("Lichess Dashboard"),
+    titlePanel("lichess.org User Statistics"),
+    
+    fluidRow(column(3,
+                    textInput("username","Enter Lichess Username", ""),
+                    actionButton("submit","Go!")
+                    ),
+             column(5,
+                    uiOutput("username_text"))
+             ),
+          
     
     fluidRow(
-      column(3,
-        #args
-        textInput("username","Enter Lichess Username", ""),
-        actionButton("submit","Go!"),
-        textOutput("text")
+      column(4
         ),
-      column(3,
+      column(2,
         #args
         h3("More Filler"),
         textOutput("game_count") %>% withSpinner()
@@ -40,7 +45,9 @@ shinyUI(fluidPage(
       column(6,
         #args
         plotlyOutput("opening_counts"),
-        plotlyOutput("elo_over_time")
+        plotlyOutput("elo_over_time"),
+        plotlyOutput("heatmap"),
+        plotlyOutput("top_opps")
         )
     )
 ))

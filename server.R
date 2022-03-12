@@ -16,6 +16,9 @@ source("functions/determine_my_elo.R")
 source("functions/determine_user_result.R")
 source("functions/time_control_category.R")
 source("functions/gather_elo_data.R")
+source("functions/dataprep_heatmap.R")
+source("functions/determine_opp.R")
+
 #source some pre saved games
 load("game_data/games.Rdata")
 # Define server logic required to draw a histogram
@@ -27,16 +30,22 @@ shinyServer(function(input, output) {
   #easily blend theme with plots
   thematic::thematic_shiny()
   
-  #test returning on actinobutton press 
-  output$text <- eventReactive(input$submit,{
-    return(tolower(input$username))
+  ## reactive text to username input
+  get_username <- eventReactive(input$submit,{
+      return(input$username)
+    })
+  observeEvent(input$submit,{
+    output$username_text <- renderUI({
+      string <- paste(get_username(), "game stats")
+      return(tags$h3(string))
+    })
   })
   
   #call api to get game data
   api_call <- eventReactive(input$submit,{
-    if(tolower(input$username) == "eldiel_prime"){
+    if(input$username == "eldiel_prime"){
       df <- eldiel_prime
-    } else if (tolower(input$username) == "drdrunkenstein"){
+    } else if (input$username == "DrDrunkenstein"){
       df <- magnus
     } else if (input$username == "TSMFTXH"){
       df <- hikaru
@@ -68,6 +77,8 @@ shinyServer(function(input, output) {
     df <- determine_my_elo(df = df, user = input$username)
     #dtermine user result
     df <- determine_user_result(df, user = input$username)
+    #opp username
+    df <- determine_opp(df, user = input$username)
 
     return(df)
   })
@@ -139,4 +150,63 @@ shinyServer(function(input, output) {
     
     return(fig)
   })
+  
+  #squares heatmap
+  
+  output$heatmap <- renderPlotly({
+    df <- game_data()
+    grid <- dataprep_heatmap(df)
+    
+    #create heatmap
+    fig2 <- ggplot(grid, aes(x = file, y = rank, fill = count)) +
+      geom_tile(color = "#161512",
+                lwd = 0.5,
+                linetype = 1) +
+      geom_text(aes(label = paste(file,rank, sep = '')), 
+                color = "#C0BFBF", size = 2.5) +
+      coord_fixed() +
+      scale_fill_gradient(low = 'blue4',
+                          high = 'red1') +
+      guides(fill = guide_colourbar(barwidth = 0.5,
+                                    barheight = 10)) +
+      labs(x = NULL, y = NULL) +
+      
+      theme(legend.position = "None",
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(),
+            text = element_text(family = font_google("Open Sans")),
+            axis.ticks = element_blank(), 
+            axis.text = element_blank())
+    #display as ggplotly object with no color scale on side
+    return(hide_colorbar(ggplotly(fig2,tooltip = c("count"))) %>% 
+             config(displayModeBar = FALSE))
+    
+  })
+  
+  #most freq opponents
+  output$top_opps <- renderPlotly({
+    df <- game_data()
+    opp_counts <- df %>% group_by(opp_name) %>% count(opp_name) %>% arrange(-n)
+    #keep top 10 opps
+    opp_counts <- opp_counts[1:10,]
+
+    #ggplot
+    fig <- 
+      opp_counts %>% 
+      ggplot(aes(x = n, y = reorder(opp_name,n))) +
+      geom_col(stat = "identity", fill = "#296FC5" ) +
+      ggtitle("Top Oppponents") +
+      labs(x= "Number of Games Played", y= NULL) +
+      theme(legend.position = NULL,
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(),
+            text = element_text(family = font_google("Open Sans")))
+    
+    #custom tooling w/ ggplotly
+    fig <- ggplotly(fig, tooltip = c("n")) %>% 
+      config(displayModeBar = F) 
+    
+    return(fig)
+  })
+  
 })
