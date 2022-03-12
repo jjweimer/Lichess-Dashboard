@@ -26,7 +26,7 @@ shinyUI(fluidPage(
     titlePanel("lichess.org User Statistics"),
     
     fluidRow(column(3,
-                    textInput("username","Enter Lichess Username", ""),
+                    textInput("username","Enter Lichess Username", "DrDrunkenstein"),
                     actionButton("submit","Go!")
                     ),
              column(5,
@@ -47,7 +47,9 @@ shinyUI(fluidPage(
         plotlyOutput("opening_counts"),
         plotlyOutput("elo_over_time"),
         plotlyOutput("heatmap"),
-        plotlyOutput("top_opps")
+        plotlyOutput("top_opps"),
+        plotlyOutput("opening_scores"),
+        plotlyOutput("time_control_scores")
         )
     )
 ))
