@@ -39,7 +39,8 @@ shinyUI(fluidPage(
         ),
       column(6,
         #args
-        plotlyOutput("opening_counts")
+        plotlyOutput("opening_counts"),
+        plotlyOutput("elo_over_time")
         )
     )
 ))
