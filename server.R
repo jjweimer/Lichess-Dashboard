@@ -38,8 +38,16 @@ shinyServer(function(input, output) {
   observeEvent(input$submit,{
     output$username_text <- renderUI({
       string <- paste(get_username(), "Rating")
-      return(tags$h3(string, style = "color:red")) #apply css styline to text inline
+      return(tags$h3(string, style = "color:#296FC5;
+                                      text-align: center;")) #apply css styline to text inline
     })
+  })
+  
+  #openings reactive text
+  output$opening_user_text <- renderUI({
+    string <- paste(get_username(), "Opening Stats")
+    return(tags$h3(string, style = "color:#296FC5;
+                                      text-align: center;")) #apply css styline to text inline
   })
   
   ##-------------- API and DATA -------------------------------------
@@ -155,11 +163,16 @@ shinyServer(function(input, output) {
       opening_counts %>% 
         ggplot(aes(x = n, y = reorder(Opening,n))) +
         geom_col(stat = "identity", fill = "#296FC5" ) +
-        ggtitle("Top Openings") +
+        #ggtitle("Top Openings") +
         labs(x= "Number of Games", y= NULL) +
+        scale_x_reverse() +
         theme(legend.position = NULL,
               panel.grid.major = element_blank(), 
               panel.grid.minor = element_blank(),
+              panel.background = element_rect(fill = "transparent",colour = NA),
+              plot.background = element_rect(fill = "transparent",colour = NA),
+              axis.text.y = element_blank(),
+              axis.ticks.y = element_blank(),
               text = element_text(family = font_google("Open Sans")))
     
     #custom tooling w/ ggplotly
@@ -169,6 +182,77 @@ shinyServer(function(input, output) {
     return(fig)
   })
   
+  #opening win rates
+  output$opening_scores <- renderPlotly({
+    df <- game_data()
+    df <- df %>% 
+      group_by(Opening) %>%
+      mutate(opening_count = n())
+    ##find top 15 openings
+    opening_counts <- df %>% group_by(Opening) %>%
+      count(Opening) %>% arrange(-n)
+    opening_counts <- opening_counts[1:15,]
+    
+    #plot
+    fig <- df[df$Opening %in% opening_counts$Opening,] %>%
+      group_by(Opening,my_result,opening_count) %>%
+      count(Opening) %>%
+      ggplot(aes(fill = my_result, y = n, x = reorder(Opening,opening_count)))+
+      geom_bar(position = "fill",stat = "identity")+
+      labs(x = NULL, y = "Win + Draw %", fill = "Result") +
+      coord_flip() + 
+      #ggtitle("Average Result") +
+      theme(legend.position='none',
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(),
+            panel.background = element_rect(fill = "transparent",colour = NA),
+            plot.background = element_rect(fill = "transparent",colour = NA),
+            axis.text.y = element_text(hjust = 1),
+            text = element_text(family = font_google("Open Sans")),
+            
+      )
+    
+    fig <- ggplotly(fig, tooltip = c("my_result","n")) %>% 
+      config(displayModeBar = F) 
+    #remove loss rates from visibility by directly editing object
+    #i am actually a genius for figureing this one out
+    #https://stackoverflow.com/questions/39625910/r-plotly-deselect-trace-by-default
+    fig[["x"]][["data"]][[1]][["visible"]] <- "legendonly"
+    
+    return(fig)
+  })
+  
+  #opening_ticks
+  #deprecated
+  output$opening_ticks <- renderPlotly({
+    df <- game_data()
+    opening_counts <- df %>% group_by(Opening) %>%
+      count(Opening) %>% arrange(-n)
+    #filter to top 15 openings atm
+    opening_counts <- opening_counts[1:15,]
+    opening_counts$rank <- 15:1
+    
+    names <- opening_counts %>%
+      ggplot(aes(x = rank, y = reorder(Opening,n))) +
+      geom_text(aes(y = 0, label = Opening, size = 3)) +
+      coord_flip() +
+      labs(x = NULL, y = NULL) +
+      ggtitle("")
+      theme(legend.position = 'none',
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(),
+            panel.background = element_rect(fill = "transparent",colour = NA),
+            plot.background = element_rect(fill = "transparent",colour = NA),
+            axis.text = element_blank()
+            )
+    
+    names <- ggplotly(names)  %>% 
+      config(displayModeBar = F) 
+    
+    return(names)
+    
+  })
+
   #elo over time plot
   output$elo_over_time <- renderPlotly({
     df <- game_data()
@@ -193,6 +277,8 @@ shinyServer(function(input, output) {
       theme(legend.position = NULL,
             panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(),
+            panel.background = element_rect(fill = "transparent",colour = NA),
+            plot.background = element_rect(fill = "transparent",colour = NA),
             text = element_text(family = font_google("Open Sans")))
     #force compare on hover
     fig <- ggplotly(fig) %>% 
@@ -259,38 +345,7 @@ shinyServer(function(input, output) {
     return(fig)
   })
   
-  #opening win rates
-  output$opening_scores <- renderPlotly({
-    df <- game_data()
-    df <- df %>% 
-      group_by(Opening) %>%
-      mutate(opening_count = n())
-    ##find top 15 openings
-    opening_counts <- df %>% group_by(Opening) %>%
-      count(Opening) %>% arrange(-n)
-    opening_counts <- opening_counts[1:15,]
-    
-    #plot
-    fig <- df[df$Opening %in% opening_counts$Opening,] %>%
-      group_by(Opening,my_result,opening_count) %>%
-      count(Opening) %>%
-      ggplot(aes(fill = my_result, y = n, x = reorder(Opening,opening_count)))+
-      geom_bar(position = "fill",stat = "identity")+
-      labs(y = NULL, x = NULL, fill = "Result") +
-      coord_flip() + 
-      ggtitle("Average Result by Opening") +
-      theme(legend.position = NULL,
-            panel.grid.major = element_blank(), 
-            panel.grid.minor = element_blank(),
-            text = element_text(family = font_google("Open Sans")),
-            axis.text.x = element_blank(),
-            axis.ticks.x = element_blank())
-    
-    fig <- ggplotly(fig, tooltip = c("my_result","n")) %>% 
-      config(displayModeBar = F) 
-    
-    return(fig)
-  })
+  
   
   #results by time control
   output$time_control_scores <- renderPlotly({

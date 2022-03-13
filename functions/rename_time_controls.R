@@ -8,6 +8,7 @@ rename_time_controls <- function(raw){
   raw[raw == "30+0"] <- "30s"
   raw[raw == "45+0"] <- "45s"
   raw[raw == '60+0'] <- '1+0'
+  raw[raw == '120+0'] <- '2+0'
   raw[raw == '120+1'] <- '2+1'
   #rapid
   raw[raw == '600+0'] <- '10+0'

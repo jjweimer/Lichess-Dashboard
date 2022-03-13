@@ -62,9 +62,25 @@ shinyUI(fixedPage(
                              ),
                     ), #end text rating stats
              column(8,
-                    plotlyOutput("elo_over_time")
+                    plotlyOutput("elo_over_time") %>% withSpinner()
                     )
              ), #end elo row
+    tags$hr(),
+    
+    #openings text
+    fluidRow(column(12,
+                    uiOutput("opening_user_text")
+                    )
+             ),
+    #openings plots
+    fluidRow(
+             column(5,
+                    plotlyOutput("opening_counts")
+                    ),
+             column(7,
+                    plotlyOutput("opening_scores")
+                    )
+             ),
     tags$hr(),
           
     #random row
@@ -74,14 +90,12 @@ shinyUI(fixedPage(
       column(2,
         #args
         h3("More Filler"),
-        textOutput("game_count") %>% withSpinner()
+        textOutput("game_count") 
         ),
       column(6,
         #args
-        plotlyOutput("opening_counts"),
         plotlyOutput("heatmap"),
         plotlyOutput("top_opps"),
-        plotlyOutput("opening_scores"),
         plotlyOutput("time_control_scores")
         )
     )
