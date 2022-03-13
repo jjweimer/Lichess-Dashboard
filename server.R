@@ -37,10 +37,12 @@ shinyServer(function(input, output) {
     })
   observeEvent(input$submit,{
     output$username_text <- renderUI({
-      string <- paste(get_username(), "game stats")
+      string <- paste(get_username(), "Rating")
       return(tags$h3(string, style = "color:red")) #apply css styline to text inline
     })
   })
+  
+  ##-------------- API and DATA -------------------------------------
   
   #call api to get game data
   api_call <- eventReactive(input$submit,{
@@ -84,6 +86,8 @@ shinyServer(function(input, output) {
     return(df)
   })
   
+  # ------------ Text Stats --------------------------------
+  
   #game count
   output$game_count <- eventReactive(input$submit,{
     df <- game_data()
@@ -91,7 +95,53 @@ shinyServer(function(input, output) {
     return(paste("Games Played: ", count))
   })
   
-  #opening counts plot
+  #elos of each rating category
+  output$blitz_elo <- renderUI({
+    df <- game_data()
+    elo_data <- gather_elo_data(df)
+    blitz_elo <- tail(elo_data$blitz, n = 1)
+    if(is.null(blitz_elo)){
+      return(tags$h3("Blitz Rating: ?"))
+    } else if (is.na(blitz_elo)){
+      return(tags$h3("Blitz Rating: ?"))
+    } else{
+      string <- paste("Blitz Rating:", blitz_elo)
+      return(tags$h3(string))
+    }
+  })
+  
+  output$bullet_elo <- renderUI({
+    df <- game_data()
+    elo_data <- gather_elo_data(df)
+    bullet_elo <- tail(elo_data$bullet, n = 1)
+    if(is.null(bullet_elo)){
+      return(tags$h3("Bullet Rating: ?"))
+    } else if (is.na(bullet_elo)){
+      return(tags$h3("Bullet Rating: ?"))
+    } else{
+      string <- paste("Bullet Rating:", bullet_elo)
+      return(tags$h3(string))
+    }
+  })
+  
+  output$rapid_elo <- renderUI({
+    df <- game_data()
+    elo_data <- gather_elo_data(df)
+    rapid_elo <- tail(elo_data$rapid, n = 1)
+    if(is.null(rapid_elo)){
+      return(tags$h3("Rapid Rating: ?"))
+    } else if (is.na(rapid_elo)){
+      return(tags$h3("Rapid Rating: ?"))
+    } else{
+      string <- paste("Rapid Rating:", rapid_elo)
+      return(tags$h3(string))
+    }
+  })
+  
+  
+ # ------------- PLOTS ----------------------------------------
+  
+   #opening counts plot
   output$opening_counts <- renderPlotly({
     df <- game_data()
     opening_counts <- df %>% group_by(Opening) %>%

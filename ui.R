@@ -8,7 +8,7 @@ library(plotly)
 options(spinner.type = 3,
         spinner.color.background  = "#161512")
 
-shinyUI(fluidPage(
+shinyUI(fixedPage(
 
     #custom theming
     theme = bslib::bs_theme(
@@ -25,15 +25,49 @@ shinyUI(fluidPage(
     # Application title
     titlePanel("lichess.org User Statistics"),
     
-    fluidRow(column(3,
-                    textInput("username","Enter Lichess Username", "DrDrunkenstein"),
-                    actionButton("submit","Go!")
-                    ),
-             column(5,
-                    uiOutput("username_text"))
+    #top row
+    fluidRow(column(12,
+                    textInput("username","Enter Lichess Username", "eldiel_prime"),
+                    actionButton("submit","Go!"),
+                    tags$hr()
+                    )
              ),
+    #Elo Row
+    fluidRow(column(4,
+                    uiOutput("username_text"),
+                    tags$hr(),
+                    #bullet stats row
+                    fluidRow(column(2,
+                                    img(src = "bullet.png",height = 60, width = 60)
+                                    ),
+                             column(10,
+                                    uiOutput("bullet_elo")
+                                    )
+                             ),
+                    #blitz stats row
+                    fluidRow(column(2,
+                                    img(src = "blitz.png", height = 60, width = 60)
+                                    ),
+                             column(10,
+                                    uiOutput("blitz_elo")
+                                    )
+                            ),
+                    #rapid stats row
+                    fluidRow(column(2,
+                                    img(src = "rapid.png", height = 60, width = 60)
+                                    ),
+                             column(10,
+                                    uiOutput("rapid_elo")
+                                    )
+                             ),
+                    ), #end text rating stats
+             column(8,
+                    plotlyOutput("elo_over_time")
+                    )
+             ), #end elo row
+    tags$hr(),
           
-    
+    #random row
     fluidRow(
       column(4
         ),
@@ -45,7 +79,6 @@ shinyUI(fluidPage(
       column(6,
         #args
         plotlyOutput("opening_counts"),
-        plotlyOutput("elo_over_time"),
         plotlyOutput("heatmap"),
         plotlyOutput("top_opps"),
         plotlyOutput("opening_scores"),

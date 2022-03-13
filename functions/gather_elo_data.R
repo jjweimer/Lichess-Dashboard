@@ -3,6 +3,8 @@ gather_elo_data <- function(df){
     slice_tail() %>% select(Date, time_control_category, my_elo) %>% 
     pivot_wider(names_from = time_control_category, values_from = my_elo)
   
+  elo_data <- elo_data %>% arrange(elo_data$Date)
+  
   if(!is.null(elo_data$blitz)){
     #ensure numeric
     elo_data$blitz <- as.numeric(elo_data$blitz)
