@@ -102,7 +102,7 @@ shinyUI(fixedPage(
                                 tabPanel("Heatmap",
                                          fluidRow(column(12,
                                                          tags$hr(),
-                                                         plotlyOutput("heatmap"),
+                                                         plotlyOutput("heatmap") %>% withSpinner(),
                                                          )
                                                   )
                                          ),
@@ -117,7 +117,7 @@ shinyUI(fixedPage(
                                            column(2,
                                                   #args
                                                   h3("More Filler"),
-                                                  textOutput("game_count") 
+                                                  textOutput("game_count") %>% withSpinner()
                                            ),
                                            column(6,
                                                   #args

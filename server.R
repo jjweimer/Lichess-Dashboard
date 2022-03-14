@@ -60,6 +60,12 @@ shinyServer(function(input, output) {
       df <- magnus
     } else if (input$username == "TSMFTXH"){
       df <- hikaru
+    } else if (input$username == "EricRosen"){
+      df <- rosen
+    } else if (input$username == "C9C9C9C9C9"){
+      df <- tang
+    } else if (input$username == "RebeccaHarris"){
+      df <- danya
     } else{
       df <- get_raw_lichess(input$username)
     }
