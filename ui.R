@@ -10,6 +10,13 @@ options(spinner.type = 3,
 
 shinyUI(fixedPage(
 
+  #load custom css from file
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "/css/style.css")
+  ),
+  #inline css styling for all body text
+  #not sure why this works or how to apply it to button text yet
+  tags$head(tags$style('body {color:#C0BFBF;}')),
     #custom theming
     theme = bslib::bs_theme(
       bg = '#161512', fg = "#C0BFBF",
@@ -18,18 +25,14 @@ shinyUI(fixedPage(
       base_font = font_google("Open Sans"),
       
     ),
-    #inline css styling for all body text
-    #not sure why this works or how to apply it to button text yet
-    tags$head(tags$style('body {color:#C0BFBF;}')),
     
     # Application title
-    fluidRow(column(12,align = "left",
+    fluidRow(column(12,align = "center",
                     h2("lichess.org User Statistics")
                     ) 
              ),
-    
     #top row
-    fluidRow(column(4, align = "left",
+    fluidRow(column(4,offset = 4, align = "center",
                     textInput("username","Enter Lichess Username", "eldiel_prime", width = "100%"),
                     actionButton("submit","Go!", width = "100%" )
                     )
@@ -98,12 +101,16 @@ shinyUI(fixedPage(
                                          ), #end openings panel
                                 tabPanel("Heatmap",
                                          fluidRow(column(12,
+                                                         tags$hr(),
                                                          plotlyOutput("heatmap"),
                                                          )
                                                   )
                                          ),
                                 tabPanel("Other",
-                                         
+                                         fluidRow(column(12,
+                                                         tags$hr()
+                                                         )
+                                                  ),
                                          fluidRow(
                                            column(4
                                            ),
@@ -119,11 +126,7 @@ shinyUI(fixedPage(
                                                   plotlyOutput("time_control_scores")
                                            )
                                          ))
-                                ), class = "flex-center" #end tabset panel
+                                )#end tabset panel
                     ) #end column (12)
              ), #end fluidrow
-    
-    
-    #random row
-    
 ))
