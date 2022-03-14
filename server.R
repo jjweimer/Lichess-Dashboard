@@ -310,12 +310,14 @@ shinyServer(function(input, output) {
       theme(legend.position = "None",
             panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(),
+            panel.background = element_rect(fill = "transparent",colour = NA),
+            plot.background = element_rect(fill = "transparent",colour = NA),
             text = element_text(family = font_google("Open Sans")),
             axis.ticks = element_blank(), 
             axis.text = element_blank())
     #display as ggplotly object with no color scale on side
     return(hide_colorbar(ggplotly(fig2,tooltip = c("count"))) %>% 
-             config(displayModeBar = FALSE))
+             config(displayModeBar = FALSE) %>% layout(height = 800, width = 800))
     
   })
   

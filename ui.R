@@ -23,80 +23,107 @@ shinyUI(fixedPage(
     tags$head(tags$style('body {color:#C0BFBF;}')),
     
     # Application title
-    titlePanel("lichess.org User Statistics"),
+    fluidRow(column(12,align = "left",
+                    h2("lichess.org User Statistics")
+                    ) 
+             ),
     
     #top row
-    fluidRow(column(12,
-                    textInput("username","Enter Lichess Username", "eldiel_prime"),
-                    actionButton("submit","Go!"),
-                    tags$hr()
+    fluidRow(column(4, align = "left",
+                    textInput("username","Enter Lichess Username", "eldiel_prime", width = "100%"),
+                    actionButton("submit","Go!", width = "100%" )
                     )
              ),
-    #Elo Row
-    fluidRow(column(4,
-                    uiOutput("username_text"),
-                    tags$hr(),
-                    #bullet stats row
-                    fluidRow(column(2,
-                                    img(src = "bullet.png",height = 60, width = 60)
-                                    ),
-                             column(10,
-                                    uiOutput("bullet_elo")
-                                    )
-                             ),
-                    #blitz stats row
-                    fluidRow(column(2,
-                                    img(src = "blitz.png", height = 60, width = 60)
-                                    ),
-                             column(10,
-                                    uiOutput("blitz_elo")
-                                    )
-                            ),
-                    #rapid stats row
-                    fluidRow(column(2,
-                                    img(src = "rapid.png", height = 60, width = 60)
-                                    ),
-                             column(10,
-                                    uiOutput("rapid_elo")
-                                    )
-                             ),
-                    ), #end text rating stats
-             column(8,
-                    plotlyOutput("elo_over_time") %>% withSpinner()
-                    )
-             ), #end elo row
     tags$hr(),
+    #tabs
+    fluidRow(column(12, align = 'center',
+                    tabsetPanel(type = "pills",
+                                tabPanel("Rating",
+                                         #Elo Row
+                                         fluidRow(column(12,
+                                                         tags$hr()),
+                                                  column(4,
+                                                         uiOutput("username_text"),
+                                                         tags$hr(),
+                                                         #bullet stats row
+                                                         fluidRow(column(2,
+                                                                         img(src = "bullet.png",height = 60, width = 60)
+                                                                         ),
+                                                                  column(10,
+                                                                         uiOutput("bullet_elo")
+                                                                         )
+                                                                  ),
+                                                         #blitz stats row
+                                                         fluidRow(column(2,
+                                                                         img(src = "blitz.png", height = 60, width = 60)
+                                                                         ),
+                                                                  column(10,
+                                                                         uiOutput("blitz_elo")
+                                                                         )
+                                                                  ),
+                                                         #rapid stats row
+                                                         fluidRow(column(2,
+                                                                         img(src = "rapid.png", height = 60, width = 60)
+                                                                         ),
+                                                                  column(10,
+                                                                         uiOutput("rapid_elo")
+                                                                         )
+                                                                  ),
+                                                        ), #end text rating stats
+                                                  column(8,
+                                                         plotlyOutput("elo_over_time") %>% withSpinner()
+                                                         )
+                                                  ), #end elo row
+                                         #tags$hr(),
+                                         ), #end rating panel
+                                
+                                #openings panel
+                                tabPanel("Openings",
+                                         #openings text
+                                         fluidRow(
+                                                  column(12,
+                                                         tags$hr(),
+                                                         uiOutput("opening_user_text")
+                                                         )
+                                                  ),
+                                         #openings plots
+                                         fluidRow(column(5,
+                                                         plotlyOutput("opening_counts")
+                                                         ),
+                                                  column(7,
+                                                         plotlyOutput("opening_scores")
+                                                         )
+                                                  ),
+                                         #tags$hr(),
+                                         ), #end openings panel
+                                tabPanel("Heatmap",
+                                         fluidRow(column(12,
+                                                         plotlyOutput("heatmap"),
+                                                         )
+                                                  )
+                                         ),
+                                tabPanel("Other",
+                                         
+                                         fluidRow(
+                                           column(4
+                                           ),
+                                           column(2,
+                                                  #args
+                                                  h3("More Filler"),
+                                                  textOutput("game_count") 
+                                           ),
+                                           column(6,
+                                                  #args
+                                                  
+                                                  plotlyOutput("top_opps"),
+                                                  plotlyOutput("time_control_scores")
+                                           )
+                                         ))
+                                ), class = "flex-center" #end tabset panel
+                    ) #end column (12)
+             ), #end fluidrow
     
-    #openings text
-    fluidRow(column(12,
-                    uiOutput("opening_user_text")
-                    )
-             ),
-    #openings plots
-    fluidRow(
-             column(5,
-                    plotlyOutput("opening_counts")
-                    ),
-             column(7,
-                    plotlyOutput("opening_scores")
-                    )
-             ),
-    tags$hr(),
-          
+    
     #random row
-    fluidRow(
-      column(4
-        ),
-      column(2,
-        #args
-        h3("More Filler"),
-        textOutput("game_count") 
-        ),
-      column(6,
-        #args
-        plotlyOutput("heatmap"),
-        plotlyOutput("top_opps"),
-        plotlyOutput("time_control_scores")
-        )
-    )
+    
 ))
