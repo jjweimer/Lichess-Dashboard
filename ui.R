@@ -20,7 +20,7 @@ shinyUI(fixedPage(
     #custom theming
     theme = bslib::bs_theme(
       bg = '#161512', fg = "#C0BFBF",
-      primary = "#A44812", #lichess orange
+      primary = "#619824", #lichess green
       secondary = "#296FC5", #lichess blue
       base_font = font_google("Open Sans"),
       

@@ -1,4 +1,10 @@
 dataprep_heatmap <- function(df){
+  #this is really slow for a lot of games because its triple nested loops
+  #limit to first 2000 rows of data, most recent 2000 games
+  if (nrow(df) > 2000){
+    df <- df[1:2000,]
+  }
+  
   #split 'moves' into individual components
   moves<- suppressWarnings(gsub("\\{.*?\\}", "", df$Moves,
                                 perl = TRUE) %>% strsplit(., "\\s+"))
@@ -31,6 +37,5 @@ dataprep_heatmap <- function(df){
                      count = values)
   
   #need to add castling and queenside castling later lol
-
   return(grid)
 }

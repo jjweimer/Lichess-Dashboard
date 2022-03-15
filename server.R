@@ -207,6 +207,7 @@ shinyServer(function(input, output) {
       geom_bar(position = "fill",stat = "identity")+
       labs(x = NULL, y = "Win + Draw %", fill = "Result") +
       coord_flip() + 
+      scale_fill_manual(values = c("#C0BFBF","#619824","#296FC5")) + #order is loss, draw, win (factor orderings)
       #ggtitle("Average Result") +
       theme(legend.position='none',
             panel.grid.major = element_blank(), 
@@ -366,6 +367,7 @@ shinyServer(function(input, output) {
       ggplot(aes(fill = my_result, y = n, x = TimeControl)) +
       geom_bar(position = "fill",stat = "identity")+
       labs(y = NULL, x = NULL, fill = "Result") +
+      scale_fill_manual(values = c("#C0BFBF","#619824","#296FC5")) + #order is loss, draw, win (factor orderings)
       theme(legend.position = NULL,
             panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(),
