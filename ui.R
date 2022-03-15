@@ -50,7 +50,7 @@ shinyUI(fixedPage(
                                                          tags$hr(),
                                                          #bullet stats row
                                                          fluidRow(column(2,
-                                                                         img(src = "bullet.png",height = 60, width = 60)
+                                                                         img(src = "images/bullet_transparent.png",height = 60, width = 60)
                                                                          ),
                                                                   column(10,
                                                                          uiOutput("bullet_elo")
@@ -58,7 +58,7 @@ shinyUI(fixedPage(
                                                                   ),
                                                          #blitz stats row
                                                          fluidRow(column(2,
-                                                                         img(src = "blitz.png", height = 60, width = 60)
+                                                                         img(src = "images/blitz_transparent.png", height = 60, width = 60)
                                                                          ),
                                                                   column(10,
                                                                          uiOutput("blitz_elo")
@@ -66,7 +66,7 @@ shinyUI(fixedPage(
                                                                   ),
                                                          #rapid stats row
                                                          fluidRow(column(2,
-                                                                         img(src = "rapid.png", height = 60, width = 60)
+                                                                         img(src = "images/rapid_transparent.png", height = 60, width = 60)
                                                                          ),
                                                                   column(10,
                                                                          uiOutput("rapid_elo")
