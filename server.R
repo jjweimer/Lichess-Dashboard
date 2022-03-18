@@ -19,6 +19,7 @@ source("functions/gather_elo_data.R")
 source("functions/dataprep_heatmap.R")
 source("functions/determine_opp.R")
 source("functions/order_time_controls.R")
+source("functions/time_spent.R")
 
 #source some pre saved games
 load("game_data/games.Rdata")
@@ -147,6 +148,12 @@ shinyServer(function(input, output) {
       string <- paste("Rapid Rating:", rapid_elo)
       return(tags$h3(string))
     }
+  })
+  
+  #time spent playing
+  output$playtime <- renderUI({
+    time <- time_spent(get_username())
+    return(h4(time))
   })
   
   
@@ -363,7 +370,7 @@ shinyServer(function(input, output) {
       count(TimeControl) %>%
       ggplot(aes(fill = my_result, y = n, x = TimeControl)) +
       geom_bar(position = "fill",stat = "identity")+
-      ggtitle("Performance by Time Control") +
+      #ggtitle("Performance by Time Control") +
       labs(y = "Win + Draw %", x = NULL, fill = "Result") +
       scale_fill_manual(values = c("#C0BFBF","#619824","#296FC5")) + #order is loss, draw, win (factor orderings)
       theme(legend.position = 'none',
@@ -390,7 +397,7 @@ shinyServer(function(input, output) {
       geom_density(alpha = 0.8, color = '#161512') + 
       labs(x = "Number of Moves") +
       scale_x_continuous(limits = c(0,120)) +
-      ggtitle("Result by Move Count") +
+      #ggtitle("Result by Move Count") +
       scale_fill_manual(values = c("#BB3231","#619824","#296FC5")) +
       theme(panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(),

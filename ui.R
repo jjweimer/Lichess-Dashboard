@@ -45,7 +45,7 @@ shinyUI(fixedPage(
       ),
     column(
       4,
-      align = "bottom",
+      align = "center",
       img(src = "images/logo.png", height = 135, width = 135)
     ),
   ),
@@ -114,14 +114,16 @@ shinyUI(fixedPage(
                           fluidRow(
                             column(
                               6,
-                              plotlyOutput("time_control_scores")
+                              plotlyOutput("time_control_scores"),
+                              h5("Performance by Time Control")
                             ),
                             column(
                               6,
-                              plotlyOutput("move_count_result")
+                              plotlyOutput("move_count_result"),
+                              h5("Result by Move Count")
                             )
-                          )
-                          #tags$hr(),
+                          ),
+                          tags$br(), #so there is some space between plot titles and page bottom
                           ), #end rating panel
                  #openings panel
                  tabPanel("Openings",
@@ -164,9 +166,9 @@ shinyUI(fixedPage(
                             ),
                           fluidRow(
                             column(
-                              2,
+                              6,
                               #args
-                              h3("More Filler"),
+                              uiOutput("playtime"),
                               textOutput("game_count") %>% withSpinner()
                               ),
                             column(
