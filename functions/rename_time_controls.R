@@ -5,6 +5,7 @@ rename_time_controls <- function(raw){
   raw[raw == '300+0'] <- '5+0'
   raw[raw == '300+3'] <- '5+3'
   #bullet
+  raw[raw == "15+0"] <- "15s"
   raw[raw == "30+0"] <- "30s"
   raw[raw == "45+0"] <- "45s"
   raw[raw == '60+0'] <- '1+0'
@@ -16,3 +17,4 @@ rename_time_controls <- function(raw){
   raw[raw == '900+10'] <- '15+10'
   return(raw)
 }
+

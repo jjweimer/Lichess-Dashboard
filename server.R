@@ -25,9 +25,6 @@ load("game_data/games.Rdata")
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
   
-  #interactive themer
-  #bslib::bs_themer()
-  
   #easily blend theme with plots
   thematic::thematic_shiny()
   
@@ -296,7 +293,6 @@ shinyServer(function(input, output) {
   })
   
   #squares heatmap
-  
   output$heatmap <- renderPlotly({
     df <- game_data()
     grid <- dataprep_heatmap(df)
@@ -354,30 +350,63 @@ shinyServer(function(input, output) {
     return(fig)
   })
   
-  
-  
   #results by time control
   output$time_control_scores <- renderPlotly({
     df <- game_data()
     df$TimeControl <- order_time_controls(df$TimeControl)
+    df <- df[df$TimeControl %in% c("15s","30s", "45s", "1+0","2+0","2+1",
+                                   '3+0','3+2','5+0','5+3',
+                                   '10+0','10+5','15+10'),]
     
     fig <- df %>% 
       group_by(TimeControl, my_result) %>%
       count(TimeControl) %>%
       ggplot(aes(fill = my_result, y = n, x = TimeControl)) +
       geom_bar(position = "fill",stat = "identity")+
-      labs(y = NULL, x = NULL, fill = "Result") +
+      ggtitle("Performance by Time Control") +
+      labs(y = "Win + Draw %", x = NULL, fill = "Result") +
       scale_fill_manual(values = c("#C0BFBF","#619824","#296FC5")) + #order is loss, draw, win (factor orderings)
-      theme(legend.position = NULL,
+      theme(legend.position = 'none',
             panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(),
+            panel.background = element_rect(fill = "transparent",colour = NA),
+            plot.background = element_rect(fill = "transparent",colour = NA),
             text = element_text(family = font_google("Open Sans")),
-            axis.text.y = element_blank(),
-            axis.ticks.y = element_blank())
+            plot.title = element_text(hjust = 0.5)
+      )
     
     fig <- ggplotly(fig, tooltip = c("my_result","n")) %>% 
       config(displayModeBar = F) 
+    
+    fig[["x"]][["data"]][[1]][["visible"]] <- "legendonly"
+    
+    return(fig)
       
+  })
+  
+  output$move_count_result <- renderPlotly({
+    df <- game_data()
+    fig <- ggplot(df, aes(x = num_moves, fill = my_result))+
+      geom_density(alpha = 0.8, color = '#161512') + 
+      labs(x = "Number of Moves") +
+      scale_x_continuous(limits = c(0,120)) +
+      ggtitle("Result by Move Count") +
+      scale_fill_manual(values = c("#BB3231","#619824","#296FC5")) +
+      theme(panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(),
+            legend.position = 'none',
+            panel.background = element_rect(fill = "transparent",colour = NA),
+            plot.background = element_rect(fill = "transparent",colour = NA),
+            text = element_text(family = font_google("Open Sans")),
+            plot.title = element_text(hjust = 0.5),
+            axis.ticks.y = element_blank(),
+            axis.text.y = element_blank()
+            )
+    
+    fig <- ggplotly(fig, tooltip = c("my_result", "num_moves")) %>% 
+      config(displayModeBar = F) 
+    
+    return(fig)
   })
   
 })
