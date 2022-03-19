@@ -8,6 +8,7 @@ library(lubridate)
 library(thematic)
 library(tidyr)
 library(zoo)
+library(formattable)
 
 #source functions
 source("functions/clean_openings.R")
@@ -20,6 +21,7 @@ source("functions/dataprep_heatmap.R")
 source("functions/determine_opp.R")
 source("functions/order_time_controls.R")
 source("functions/time_spent.R")
+source("functions/titles.R")
 
 #source some pre saved games
 load("game_data/games.Rdata")
@@ -348,6 +350,8 @@ shinyServer(function(input, output) {
       theme(legend.position = NULL,
             panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(),
+            panel.background = element_rect(fill = "transparent",colour = NA),
+            plot.background = element_rect(fill = "transparent",colour = NA),
             text = element_text(family = font_google("Open Sans")))
     
     #custom tooling w/ ggplotly
@@ -414,6 +418,32 @@ shinyServer(function(input, output) {
       config(displayModeBar = F) 
     
     return(fig)
+  })
+  
+  ## ----------- TABLES ---------------------------
+  
+  #title counts played against
+  output$title_table <- renderTable({
+    df <- game_data()
+    df <- determine_titles(df, get_username())
+    counts <- count_titles(df)
+    return(counts)
+  })
+  
+  dataprep_title_table_2 <- reactive({
+    df <- game_data()
+    df <- determine_titles(df, get_username())
+    counts <- count_titles(df)
+    return(counts)
+  })
+  
+  #title counts with formattable
+  output$title_table_2 <- renderFormattable({
+    formattable(
+      dataprep_title_table_2(), 
+      list(opp_title = formatter("span", style = ~ style(color = "#BF811D"))),
+      align ="c"
+      )
   })
   
 })

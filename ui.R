@@ -3,6 +3,7 @@ library(shinycssloaders)
 library(dplyr)
 library(bslib)
 library(plotly)
+library(formattable)
 
 #spinner options
 options(spinner.type = 3,
@@ -161,20 +162,24 @@ shinyUI(fixedPage(
                           fluidRow(
                             column(
                               12,
-                              tags$hr()
+                              tags$hr(),
+                              uiOutput("playtime"),
+                              textOutput("game_count") %>% withSpinner(),
+                              tags$br()
                               )
                             ),
                           fluidRow(
                             column(
                               6,
-                              #args
-                              uiOutput("playtime"),
-                              textOutput("game_count") %>% withSpinner()
+                              plotlyOutput("top_opps")
                               ),
                             column(
-                              6,
-                              plotlyOutput("top_opps"),
-                              
+                              4,
+                              tableOutput("title_table"),
+                              ),
+                            column(
+                              2,
+                              formattableOutput("title_table_2")
                               )
                             )
                           )#ned other panel
