@@ -3,3 +3,9 @@
   flex-wrap: wrap;
   justify-content: center;
 }
+/* :nth-child() can be used for specifying specific rows or cols of element */
+tbody>tr>:nth-child(1){
+  color:#BF811D;
+  text-align:center;
+  font-weight: bold;
+ }

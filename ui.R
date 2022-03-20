@@ -140,7 +140,7 @@ shinyUI(fixedPage(
                             column(
                               2,
                               h5("Titled Opponents"),
-                              formattableOutput("title_table_2")
+                              tableOutput("title_table")
                             ),
                             column(
                               5,

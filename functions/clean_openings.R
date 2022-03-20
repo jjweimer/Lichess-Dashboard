@@ -9,7 +9,7 @@ clean_openings <- function(raw_openings){
                      "Dutch Defense","Budapest Defense",
                      "Zukertort Opening", "Nimzo-Larsen Attack",
                      "Alekhine Defense", "Bishop's Opening",
-                     "Pterodactyl Defense")
+                     "Pterodactyl Defense", "Stafford Gambit")
   #replace raw with generalized names
   for(i in opening_names){
     #subset data frame and replace opening names with needle
