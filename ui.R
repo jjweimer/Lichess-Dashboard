@@ -18,7 +18,7 @@ shinyUI(fixedPage(
   ),
   #inline css styling for all body text
   #not sure why this works or how to apply it to button text yet
-  tags$head(tags$style('body {color:#C0BFBF;}')),
+  #tags$head(tags$style('body {color:#C0BFBF;}')),
     #custom theming
     theme = bslib::bs_theme(
       bg = '#161512', fg = "#C0BFBF",
@@ -126,6 +126,36 @@ shinyUI(fixedPage(
                           ),
                           tags$br(), #so there is some space between plot titles and page bottom
                           ), #end rating panel
+                 tabPanel("Social",
+                          fluidRow(
+                            column(
+                              12,
+                              tags$hr(),
+                              uiOutput("playtime"),
+                              uiOutput("game_count"),
+                              tags$br()
+                            )
+                          ),
+                          fluidRow(
+                            column(
+                              2,
+                              h5("Titled Opponents"),
+                              formattableOutput("title_table_2")
+                            ),
+                            column(
+                              5,
+                              align = "center",
+                              plotlyOutput("weekday_plot") %>% withSpinner(),
+                              h5("Weekly Game Distribution") 
+                            ),
+                            column(
+                              5,
+                              align = "center",
+                              plotlyOutput("top_opps"),
+                              h5("Top Opponents")
+                            )
+                          )
+                 ),#end social panel
                  #openings panel
                  tabPanel("Openings",
                           #openings text
@@ -157,33 +187,8 @@ shinyUI(fixedPage(
                               plotlyOutput("heatmap") %>% withSpinner(),
                               )
                             )
-                          ),
-                 tabPanel("Social",
-                          fluidRow(
-                            column(
-                              12,
-                              tags$hr(),
-                              uiOutput("playtime"),
-                              textOutput("game_count") %>% withSpinner(),
-                              tags$br()
-                              )
-                            ),
-                          fluidRow(
-                            column(
-                              6,
-                              plotlyOutput("top_opps")
-                              ),
-                            column(
-                              4,
-                              tableOutput("title_table"),
-                              ),
-                            column(
-                              2,
-                              formattableOutput("title_table_2")
-                              )
-                            )
-                          )#ned other panel
+                          ) #end heatmap panel
                  )#end tabset panel
      ) #end column (12)
-   ), #end fluidrow
+   ) #end fluidrow
 ))

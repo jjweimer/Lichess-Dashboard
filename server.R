@@ -35,6 +35,7 @@ shinyServer(function(input, output) {
   get_username <- eventReactive(input$submit,{
       return(input$username)
     })
+  
   observeEvent(input$submit,{
     output$username_text <- renderUI({
       string <- paste(get_username(), "Rating")
@@ -75,7 +76,6 @@ shinyServer(function(input, output) {
   #clean data
   game_data <- eventReactive(input$submit,{
     df <- api_call()
-    
     #helpers from ChessR
     df$num_moves <- return_num_moves(moves_string = df$Moves)
     df$winner <- get_winner(result_column = df$Result,
@@ -83,30 +83,23 @@ shinyServer(function(input, output) {
                             black = df$Black)
     #change dates to date class
     df$Date <- ymd(df$Date)
-    #day of week
     df$day_of_week <- wday(df$Date, label = TRUE)
-    #rename time controls
     df$TimeControl <- rename_time_controls(df$TimeControl)
     df <- time_control_category(df)
-    #standardize opening names
     df$Opening <- clean_openings(df$Opening)
-    #determine user elo ("my elo") and opp elo
     df <- determine_my_elo(df = df, user = input$username)
-    #dtermine user result
     df <- determine_user_result(df, user = input$username)
-    #opp username
     df <- determine_opp(df, user = input$username)
-
     return(df)
   })
   
   # ------------ Text Stats --------------------------------
   
   #game count
-  output$game_count <- eventReactive(input$submit,{
+  output$game_count <- renderUI({
     df <- game_data()
-    count <- nrow(df)
-    return(paste("Games Played: ", count))
+    string <- paste("Games Played:", nrow(df))
+    return(h4(string))
   })
   
   #elos of each rating category
@@ -158,7 +151,6 @@ shinyServer(function(input, output) {
     return(h4(time))
   })
   
-  
  # ------------- PLOTS ----------------------------------------
   
    #opening counts plot
@@ -189,7 +181,9 @@ shinyServer(function(input, output) {
     
     #custom tooling w/ ggplotly
     fig <- ggplotly(fig, tooltip = c("n")) %>% 
-      config(displayModeBar = F) 
+      config(displayModeBar = F) %>% 
+      layout(xaxis=list(fixedrange=TRUE)) %>%
+      layout(yaxis=list(fixedrange=TRUE))
   
     return(fig)
   })
@@ -226,7 +220,9 @@ shinyServer(function(input, output) {
       )
     
     fig <- ggplotly(fig, tooltip = c("my_result","n")) %>% 
-      config(displayModeBar = F) 
+      config(displayModeBar = F) %>% 
+      layout(xaxis=list(fixedrange=TRUE)) %>%
+      layout(yaxis=list(fixedrange=TRUE))
     #remove loss rates from visibility by directly editing object
     #i am actually a genius for figureing this one out
     #https://stackoverflow.com/questions/39625910/r-plotly-deselect-trace-by-default
@@ -286,7 +282,7 @@ shinyServer(function(input, output) {
     }
     
     fig <- fig +  
-      labs(x = NULL, y = "Elo") +
+      labs(x = NULL, y = NULL) +
       theme(legend.position = NULL,
             panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(),
@@ -296,7 +292,9 @@ shinyServer(function(input, output) {
     #force compare on hover
     fig <- ggplotly(fig) %>% 
       config(displayModeBar = FALSE) %>%
-      layout(hovermode = 'x')
+      layout(hovermode = 'x')%>% 
+      layout(xaxis=list(fixedrange=TRUE)) %>%
+      layout(yaxis=list(fixedrange=TRUE))
     
     return(fig)
   })
@@ -329,8 +327,10 @@ shinyServer(function(input, output) {
             axis.text = element_blank())
     #display as ggplotly object with no color scale on side
     return(hide_colorbar(ggplotly(fig2,tooltip = c("count"))) %>% 
-             config(displayModeBar = FALSE) %>% layout(height = 800, width = 800))
-    
+             config(displayModeBar = FALSE) %>%
+             layout(height = 800, width = 800)) %>% 
+             layout(xaxis=list(fixedrange=TRUE)) %>%
+            layout(yaxis=list(fixedrange=TRUE))
   })
   
   #most freq opponents
@@ -345,7 +345,7 @@ shinyServer(function(input, output) {
       opp_counts %>% 
       ggplot(aes(x = n, y = reorder(opp_name,n))) +
       geom_col(stat = "identity", fill = "#296FC5" ) +
-      ggtitle("Top Oppponents") +
+      #ggtitle("Top Oppponents") +
       labs(x= "Number of Games Played", y= NULL) +
       theme(legend.position = NULL,
             panel.grid.major = element_blank(), 
@@ -356,7 +356,9 @@ shinyServer(function(input, output) {
     
     #custom tooling w/ ggplotly
     fig <- ggplotly(fig, tooltip = c("n")) %>% 
-      config(displayModeBar = F) 
+      config(displayModeBar = F) %>% 
+      layout(xaxis=list(fixedrange=TRUE)) %>%
+      layout(yaxis=list(fixedrange=TRUE))
     
     return(fig)
   })
@@ -387,7 +389,9 @@ shinyServer(function(input, output) {
       )
     
     fig <- ggplotly(fig, tooltip = c("my_result","n")) %>% 
-      config(displayModeBar = F) 
+      config(displayModeBar = F) %>% 
+      layout(xaxis=list(fixedrange=TRUE)) %>%
+      layout(yaxis=list(fixedrange=TRUE))
     
     fig[["x"]][["data"]][[1]][["visible"]] <- "legendonly"
     
@@ -415,8 +419,34 @@ shinyServer(function(input, output) {
             )
     
     fig <- ggplotly(fig, tooltip = c("my_result", "num_moves")) %>% 
-      config(displayModeBar = F) 
+      config(displayModeBar = F) %>% 
+      layout(xaxis=list(fixedrange=TRUE)) %>%
+      layout(yaxis=list(fixedrange=TRUE))
     
+    return(fig)
+  })
+  
+  #day of week habits
+  output$weekday_plot <- renderPlotly({
+    df <- game_data()
+    fig <- df %>% group_by(day_of_week) %>%
+      count(day_of_week) %>%
+      ggplot(aes(x = day_of_week, y = n)) +
+      geom_bar(stat = "identity", fill = "#619824") +
+      labs(x = NULL, y = NULL) +
+      theme(legend.position="none",
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(),
+            panel.background = element_rect(fill = "transparent",colour = NA),
+            plot.background = element_rect(fill = "transparent",colour = NA),
+            axis.ticks.y = element_blank(),
+            axis.text.y = element_blank(),
+            text = element_text(family = font_google("Open Sans"))
+            )
+    fig <- ggplotly(fig, tooltip = c("day_of_week", "n")) %>% 
+      config(displayModeBar = F) %>% 
+      layout(xaxis=list(fixedrange=TRUE)) %>%
+      layout(yaxis=list(fixedrange=TRUE))
     return(fig)
   })
   
