@@ -140,7 +140,7 @@ shinyUI(fixedPage(
                             column(
                               2,
                               h5("Titled Opponents"),
-                              tableOutput("title_table")
+                              uiOutput("title_table")
                             ),
                             column(
                               5,
@@ -190,5 +190,5 @@ shinyUI(fixedPage(
                           ) #end heatmap panel
                  )#end tabset panel
      ) #end column (12)
-   ) #end fluidrow
+   )#end fluidrow
 ))

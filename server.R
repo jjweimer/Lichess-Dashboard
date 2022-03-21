@@ -453,27 +453,15 @@ shinyServer(function(input, output) {
   ## ----------- TABLES ---------------------------
   
   #title counts played against
-  output$title_table <- renderTable({
+  output$title_table <- renderUI({
     df <- game_data()
     df <- determine_titles(df, get_username())
     counts <- count_titles(df)
-    return(counts)
-  })
-  
-  dataprep_title_table_2 <- reactive({
-    df <- game_data()
-    df <- determine_titles(df, get_username())
-    counts <- count_titles(df)
-    return(counts)
-  })
-  
-  #title counts with formattable
-  output$title_table_2 <- renderFormattable({
-    formattable(
-      dataprep_title_table_2(), 
-      list(opp_title = formatter("span", style = ~ style(color = "#BF811D"))),
-      align ="c"
-      )
+    if (nrow(counts) < 1){
+      return(h5("None"))
+    } else {
+      return(renderTable(counts))
+    }
   })
   
 })

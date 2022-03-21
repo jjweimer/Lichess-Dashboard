@@ -9,3 +9,7 @@ tbody>tr>:nth-child(1){
   text-align:center;
   font-weight: bold;
  }
+
+ input{
+  text-align: center;
+ }
