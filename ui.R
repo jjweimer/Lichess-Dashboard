@@ -14,7 +14,7 @@ shinyUI(fixedPage(
  ## --------- THEMING ------------------------------              
   #load custom css from file
   tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "/css/style.css")
+    tags$link(rel = "stylesheet", type = "text/css", href = "css/style.css")
   ),
   #inline css styling for all body text
   #not sure why this works or how to apply it to button text yet
@@ -75,7 +75,7 @@ shinyUI(fixedPage(
                               fluidRow(
                                 column(
                                   2,
-                                  img(src = "images/bullet_transparent.png",height = 60, width = 60)
+                                  img(src = "images/bullet.PNG",height = 60, width = 60)
                                   ),
                                 column(
                                   10,
@@ -86,7 +86,7 @@ shinyUI(fixedPage(
                               fluidRow(
                                 column(
                                   2,
-                                  img(src = "images/blitz_transparent.png", height = 60, width = 60)
+                                  img(src = "images/blitz.PNG", height = 60, width = 60)
                                   ),
                                 column(
                                   10,
@@ -97,7 +97,7 @@ shinyUI(fixedPage(
                               fluidRow(
                                 column(
                                   2,
-                                  img(src = "images/rapid_transparent.png", height = 60, width = 60)
+                                  img(src = "images/rapid.PNG", height = 60, width = 60)
                                   ),
                                 column(
                                   10,
