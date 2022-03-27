@@ -143,13 +143,13 @@ shinyUI(fixedPage(
                               uiOutput("title_table")
                             ),
                             column(
-                              5,
+                              4,
                               align = "center",
                               plotlyOutput("weekday_plot") %>% withSpinner(),
                               h5("Weekly Game Distribution") 
                             ),
                             column(
-                              5,
+                              6,
                               align = "center",
                               plotlyOutput("top_opps"),
                               h5("Top Opponents")

@@ -8,7 +8,6 @@ library(lubridate)
 library(thematic)
 library(tidyr)
 library(zoo)
-library(formattable)
 
 #source functions
 source("functions/clean_openings.R")
@@ -22,6 +21,7 @@ source("functions/determine_opp.R")
 source("functions/order_time_controls.R")
 source("functions/time_spent.R")
 source("functions/titles.R")
+source("functions/dataprep_top_opps.R")
 
 #source some pre saved games
 load("game_data/games.Rdata")
@@ -336,18 +336,16 @@ shinyServer(function(input, output) {
   #most freq opponents
   output$top_opps <- renderPlotly({
     df <- game_data()
-    opp_counts <- df %>% group_by(opp_name) %>% count(opp_name) %>% arrange(-n)
-    #keep top 10 opps
-    opp_counts <- opp_counts[1:10,]
-
+    opp_counts <- dataprep_top_opps(df)
     #ggplot
     fig <- 
-      opp_counts %>% 
-      ggplot(aes(x = n, y = reorder(opp_name,n))) +
-      geom_col(stat = "identity", fill = "#296FC5" ) +
+      opp_counts[opp_counts$opp_name %in% unique(opp_counts$opp_name)[1:15],] %>% 
+      ggplot(aes(x = n, y = reorder(opp_name,total_count), fill = my_result)) +
+      geom_col(stat = "identity", position = "stack") +
+      scale_fill_manual(values = c("#BB3231","#619824","#296FC5")) +
       #ggtitle("Top Oppponents") +
       labs(x= "Number of Games Played", y= NULL) +
-      theme(legend.position = NULL,
+      theme(legend.position = 'none',
             panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(),
             panel.background = element_rect(fill = "transparent",colour = NA),
