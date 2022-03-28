@@ -353,7 +353,7 @@ shinyServer(function(input, output) {
             text = element_text(family = font_google("Open Sans")))
     
     #custom tooling w/ ggplotly
-    fig <- ggplotly(fig, tooltip = c("n")) %>% 
+    fig <- ggplotly(fig, tooltip = c("n", "my_result")) %>% 
       config(displayModeBar = F) %>% 
       layout(xaxis=list(fixedrange=TRUE)) %>%
       layout(yaxis=list(fixedrange=TRUE))
